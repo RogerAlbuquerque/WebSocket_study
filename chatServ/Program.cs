@@ -24,7 +24,7 @@ app.Map("/ws", async context =>
 
         // Requests user nickname
         await webSocket.SendAsync(
-            new ArraySegment<byte>(Encoding.UTF8.GetBytes("Digite seu apelido:")),
+            new ArraySegment<byte>(Encoding.UTF8.GetBytes("Type your Nickname:")),
             WebSocketMessageType.Text,
             true,
             CancellationToken.None);
@@ -32,7 +32,7 @@ app.Map("/ws", async context =>
         var nickname = await ReceiveNickname(webSocket);
         if (string.IsNullOrEmpty(nickname))
         {
-            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Apelido inválido", CancellationToken.None);
+            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Invalid Nickname", CancellationToken.None);
             return;
         }
 
@@ -45,7 +45,7 @@ app.Map("/ws", async context =>
     else
     {
         context.Response.StatusCode = 400;
-        await context.Response.WriteAsync("Only WebSocket COnnections are allowed.");
+        await context.Response.WriteAsync("Only WebSocket Connections are allowed.");
     }
 });
 
