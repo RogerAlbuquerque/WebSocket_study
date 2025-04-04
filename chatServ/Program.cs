@@ -54,6 +54,8 @@ await app.RunAsync();
 async Task<string> ReceiveNickname(WebSocket webSocket)
 {
     var buffer = new byte[1024 * 4];
+
+    // Code will stop in methods like ReceiveAsync, until receive any websocket request
     var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
     if (result.MessageType == WebSocketMessageType.Text)
