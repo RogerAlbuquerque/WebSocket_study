@@ -4,7 +4,7 @@
     <h1>Chat WebSocket Simples</h1>
     <input type="text" id="messageInput" placeholder="Digite uma mensagem" />
     <button onclick="sendMessage()">Enviar</button>
-    <div id="messages"></div>
+    <div id="messages" style="text-align: right;"></div>
 
     <script>
         const socket = new WebSocket('ws://localhost:5268/ws');
@@ -15,7 +15,10 @@
 
         socket.onmessage = (event) => {
             const messagesDiv = document.getElementById('messages');
-            messagesDiv.innerHTML += `<p>${event.data}</p>`;
+            formatedMessage = event.data.startsWith("Me") ? `<p style="text-align: left;">${event.data}</p>` : `<p style="text-align: right;">${event.data}</p>`
+            messagesDiv.innerHTML += formatedMessage;
+            console.log(event.data)
+            console.log(event.data.startsWith("Me"))
         };
 
         socket.onclose = () => {

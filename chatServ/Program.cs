@@ -12,7 +12,6 @@ var app = builder.Build();
 
 app.UseWebSockets();
 
-// Dictionary for storing WebSocket connections and user information
 var connections = new ConcurrentDictionary<string, (WebSocket Socket, string Nickname)>();
 
 app.Map("/ws", async context =>
@@ -55,7 +54,6 @@ async Task<string> ReceiveNickname(WebSocket webSocket)
 {
     var buffer = new byte[1024 * 4];
 
-    // Code will stop in methods like ReceiveAsync, until receive any websocket request
     var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
     if (result.MessageType == WebSocketMessageType.Text)
@@ -79,20 +77,16 @@ async Task HandleWebSocketConnection(WebSocket webSocket, string connectionId)
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
             var (senderSocket, senderNickname) = connections[connectionId];
 
-            // Send message to all the !!!! OTHER !!!!  users connected on chat
             foreach (var (socket, nickname) in connections.Values)
             {
-                if (socket != senderSocket)
-                {
                     await socket.SendAsync(
-                        new ArraySegment<byte>(Encoding.UTF8.GetBytes($"{senderNickname}: {message}")),
+                        new ArraySegment<byte>(Encoding.UTF8.GetBytes($"{(senderNickname == nickname ? "Me" : senderNickname)}: {message}")),
                         WebSocketMessageType.Text,
                         true,
                         CancellationToken.None);
-                }
             }
         }
-        else if (result.MessageType == WebSocketMessageType.Close)
+            else if (result.MessageType == WebSocketMessageType.Close)
         {
             connections.TryRemove(connectionId, out var disconnected);
             Console.WriteLine($"{disconnected.Nickname} Left the chat.");
